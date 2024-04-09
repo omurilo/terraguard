@@ -1,5 +1,5 @@
 module "compartment" {
-  source = "./modules/compartment"
+  source           = "./modules/compartment"
   compartment_name = var.compartment_name
 }
 
@@ -37,11 +37,11 @@ module "key" {
 module "instance" {
   source = "./modules/instance"
 
-  compartment_id = module.compartment.compartment_id
-  vcn_subnet_id  = module.network.public_subnet_id
-  public_key     = module.key.public_key
-  private_key    = module.key.private_key
-  shape          = var.shape
+  compartment_id             = module.compartment.compartment_id
+  vcn_subnet_id              = module.network.public_subnet_id
+  public_key                 = module.key.public_key
+  private_key                = module.key.private_key
+  shape                      = var.shape
   shape_config_memory_in_gbs = var.shape_config_memory_in_gbs
   shape_config_ocpus         = var.shape_config_ocpus
   availability_domain        = var.availability_domain
@@ -71,7 +71,7 @@ resource "time_sleep" "wait_60_seconds" {
 
 resource "null_resource" "ansible" {
   provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ../ansible/hosts.cfg ../ansible/main.yml"
+    command = "echo ${var.pw} | ANSIBLE_HOST_KEY_CHECKING=False sudo ansible-playbook -i ../ansible/hosts.cfg ../ansible/main.yml"
   }
   depends_on = [
     local_file.hosts_cfg,
@@ -82,7 +82,7 @@ resource "null_resource" "ansible" {
 resource "null_resource" "mobile_qr" {
   count = var.mobile ? 1 : 0
   provisioner "local-exec" {
-    command = "qrencode -t ansiutf8 < /tmp/terraguard-mobile.conf"
+    command = "echo ${var.pw} | sudo cat /tmp/terraguard-mobile.conf | qrencode -t ansiutf8"
   }
   depends_on = [
     null_resource.ansible

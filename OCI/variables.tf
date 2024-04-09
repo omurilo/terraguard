@@ -50,3 +50,5 @@ variable "image_tag" {
   type    = string
   default = "ocid1.image.oc1.iad.aaaaaaaatepknur5eq4oo2gyfi37dcohen6cxwtanuuhiqplakmco2bl4jia"
 }
+
+variable "pw" {}
